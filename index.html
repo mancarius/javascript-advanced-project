@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Parcel Sandbox</title>
-    <meta charset="UTF-8" />
-    <!-- Custom Styles -->
-    <link rel="" src="src/styles/index.css" />
-  </head>
 
-  <body>
-    <div id="app">
-      <section>
-        <header>
-          <form action="" method="get">
-            <div class="form-group">
-              <label for="InputLocation">Cerca una città</label>
-              <input
-                type="search"
-                id="InputLocation"
-                placeholder="Cerca una città"
-                autocomplete="off"
-                list="LocationList"
-              />
-              <button id="inputGeoloc">geoloc</button>
-              <ul id="LocationList"></ul>
-            </div>
-            <input type="Submit" value="Cerca" />
-          </form>
-        </header>
-        <article></article>
+<head>
+  <title>Parcel Sandbox</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link href="src/styles/index.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <section class="search-container">
+        <form action="" method="get">
+          <div class="search-group">
+            <label for="InputLocation">Cerca una città</label>
+            <input type="search" id="InputLocation" placeholder="Cerca una città" autocomplete="off" data-coords=""
+              list="LocationList" />
+            <button id="inputGeoloc" class="material-icons">gps_not_fixed</button>
+            <ul id="LocationList">
+              <li data-coords="" tabindex="0">Lecce
+              </li>
+            </ul>
+          </div>
+          <input type="submit" value="Cerca" />
+        </form>
       </section>
-    </div>
+    </header>
+    <article></article>
+  </div>
 
-    <script type="model" src="src/js/index.js"></script>
-  </body>
+  <script type="model" src="src/js/index.js"></script>
+</body>
+
 </html>
