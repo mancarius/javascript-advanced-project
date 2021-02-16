@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+    <!-- Custom Styles -->
+    <link rel="" src="src/styles/index.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <section>
+        <header>
+          <form action="" method="get">
+            <div class="form-group">
+              <label for="InputLocation">Cerca una città</label>
+              <input
+                type="search"
+                id="InputLocation"
+                placeholder="Cerca una città"
+                autocomplete="off"
+                list="LocationList"
+              />
+              <button id="inputGeoloc">geoloc</button>
+              <ul id="LocationList"></ul>
+            </div>
+            <input type="Submit" value="Cerca" />
+          </form>
+        </header>
+        <article></article>
+      </section>
+    </div>
+
+    <script type="model" src="src/js/index.js"></script>
+  </body>
+</html>
