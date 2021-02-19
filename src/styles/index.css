@@ -121,6 +121,7 @@ label {
 }
 
 .search-container form .search-group .suggested-list {
+  font-size: inherit;
   display: block;
   position: absolute;
   background-color: #fff;
