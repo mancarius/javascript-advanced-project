@@ -13,6 +13,7 @@
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "dotenv": "^8.2.0",
+    "jquery": "^3.5.1",
     "lodash": "^4.17.20",
     "process": "^0.11.10",
     "webpack": "^5.22.0",

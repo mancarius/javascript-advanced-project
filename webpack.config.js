@@ -20,7 +20,9 @@ const config = {
         }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
-            _: 'lodash'
+            _: 'lodash',
+            $: 'jquery',
+            jquery: 'jquery'
         }),
     ],
     optimization: {
