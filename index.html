@@ -15,16 +15,14 @@
   <div id="app">
     <header>
       <section class="search-container">
-        <form action="" method="get">
+        <form id="locationSearchForm">
           <div class="search-group">
             <label for="InputLocation">Cerca una città</label>
-            <input type="search" id="InputLocation" placeholder="Cerca una città" autocomplete="off" data-coords=""
-              list="LocationList" />
-            <button id="inputGeoloc" class="material-icons">gps_not_fixed</button>
-            <ul id="LocationList">
-              <li data-coords="" tabindex="0">Lecce
-              </li>
+            <input type="search" id="InputLocation" name="InputLocation" placeholder="Cerca una città" autocomplete="off" data-coords data-location-id
+              data-list="LocationList" />
+            <ul id="LocationList" class="suggested-list">
             </ul>
+            <a id="inputGeolocation" class="material-icons" role="button" alt="Usa la mia posizione">gps_not_fixed</a>
           </div>
           <input type="submit" value="Cerca" />
         </form>
@@ -33,7 +31,9 @@
     <article></article>
   </div>
 
-  <script type="model" src="src/js/index.js"></script>
+  <script type="text/javascript" src="src/dist/main.bundle.js"></script>
+  <script type="text/javascript" src="src/dist/runtime.bundle.js"></script>
+  <script type="text/javascript" src="src/dist/vendors.bundle.js"></script>
 </body>
 
 </html>
