@@ -28,6 +28,16 @@ label {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-transition: min-height 200ms ease-out;
+  transition: min-height 200ms ease-out;
+}
+
+.search-container.minimize {
+  min-height: 1px;
+}
+
+.search-container.minimize button.submit {
+  display: none;
 }
 
 .search-container form {
@@ -53,7 +63,7 @@ label {
   color: #585858;
   width: 100%;
   max-width: 600px;
-  margin-bottom: 1em;
+  margin: 1em 0 2em;
 }
 
 .search-container form .search-group.autocomplete input[type="search"]:focus {
@@ -102,7 +112,7 @@ label {
   cursor: pointer;
   outline: none;
   opacity: .3;
-  z-index: 2;
+  z-index: 10;
   padding: 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -114,6 +124,7 @@ label {
       -ms-flex-align: center;
           align-items: center;
   font-size: inherit;
+  color: inherit;
 }
 
 .search-container form .search-group a[role="button"]:hover, .search-container form .search-group a[role="button"]:focus {
@@ -149,9 +160,14 @@ label {
 }
 
 .search-container form .search-group .suggested-list li {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   line-height: 2em;
   cursor: pointer;
   padding: 0 1em;
+  padding-right: 3em;
   outline: none;
 }
 
@@ -160,12 +176,19 @@ label {
 }
 
 .search-container form .search-group .suggested-list li small {
-  float: right;
+  position: absolute;
+  text-align: right;
+  display: block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 1em;
 }
 
-.search-container form input[type="submit"] {
+.search-container form button.submit {
   border: none;
   border-radius: 3em;
+  position: relative;
   height: 2em;
   background-color: cornflowerblue;
   color: #fff;
@@ -174,11 +197,97 @@ label {
   padding: 0 1em;
   cursor: pointer;
   outline: none;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-transition: ease 200ms;
+  transition: ease 200ms;
 }
 
-.search-container form input[type="submit"]:hover, .search-container form input[type="submit"]:focus {
+.search-container form button.submit:hover, .search-container form button.submit:focus {
   border-style: solid;
   border-width: 3px;
-  border-color: #1b5bd3;
+  border-color: #5f76a0;
+}
+
+.search-container form button.submit::before {
+  content: '';
+  position: absolute;
+  border-radius: 100%;
+  width: .5em;
+  height: .5em;
+  background-color: cornflowerblue;
+  top: 50%;
+  left: -1em;
+  margin-left: 100%;
+}
+
+.search-container form button.submit.loading {
+  border-radius: 100%;
+  width: .5em;
+  height: .5em;
+  padding: 0;
+  color: transparent;
+}
+
+.search-container form button.submit.loading::before {
+  -webkit-animation-name: bounce;
+          animation-name: bounce;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  /* or: Xms */
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+  /* or: normal */
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  /* or: ease, ease-in, ease-in-out, linear, cubic-bezier(x1, y1, x2, y2) */
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+  /* or: backwards, both, none */
+}
+
+@-webkit-keyframes bounce {
+  0% {
+    left: calc(-1em - 100%);
+    -webkit-transform: scale(1) translateY(-50%);
+            transform: scale(1) translateY(-50%);
+  }
+  50% {
+    -webkit-transform: scaleX(1.1) scaleY(0.9) translateY(-55%);
+            transform: scaleX(1.1) scaleY(0.9) translateY(-55%);
+  }
+  100% {
+    left: calc(1em - 100%);
+    -webkit-transform: scale(1) translateY(-50%);
+            transform: scale(1) translateY(-50%);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    left: calc(-1em - 100%);
+    -webkit-transform: scale(1) translateY(-50%);
+            transform: scale(1) translateY(-50%);
+  }
+  50% {
+    -webkit-transform: scaleX(1.1) scaleY(0.9) translateY(-55%);
+            transform: scaleX(1.1) scaleY(0.9) translateY(-55%);
+  }
+  100% {
+    left: calc(1em - 100%);
+    -webkit-transform: scale(1) translateY(-50%);
+            transform: scale(1) translateY(-50%);
+  }
+}
+
+@media only screen and (max-width: 641px) {
+  .search-container {
+    min-height: 1px;
+  }
+  .search-container button.submit {
+    display: none;
+  }
 }
 /*# sourceMappingURL=index.css.map */

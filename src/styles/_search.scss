@@ -1,6 +1,15 @@
 .search-container {
     min-height: 100vh;
     display: flex;
+    transition: min-height 200ms ease-out;
+
+    &.minimize {
+        min-height: 1px;
+
+        button.submit {
+            display: none;
+        }
+    }
 
     form {
         width: 100%;
@@ -15,7 +24,7 @@
             color: rgb(88, 88, 88);
             width: 100%;
             max-width: 600px;
-            margin-bottom: 1em;
+            margin: 1em 0 2em;
 
             &.autocomplete {
                 input[type="search"]:focus {
@@ -67,12 +76,13 @@
                 cursor: pointer;
                 outline: none;
                 opacity: .3;
-                z-index: 2;
+                z-index: 10;
                 padding: 0;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 font-size: inherit;
+                color: inherit;
 
                 &:hover,
                 &:focus {
@@ -112,9 +122,14 @@
                 }
 
                 li {
+                    position: relative;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                     line-height: 2em;
                     cursor: pointer;
                     padding: 0 1em;
+                    padding-right: 3em;
                     outline: none;
 
                     &:hover,
@@ -123,18 +138,25 @@
                     }
 
                     small {
-                        float: right;
+                        position: absolute;
+                        text-align: right;
+                        display: block;
+                        top:0;
+                        right: 0;
+                        bottom: 0;
+                        padding: 0 1em;
                     }
                 }
             }
 
         }
 
-        input[type="submit"] {
+        button.submit {
             border: none {
                 radius: 3em
             }
 
+            position: relative;
             height: 2em;
             background-color: cornflowerblue;
             color: #fff;
@@ -143,15 +165,75 @@
             padding: 0 1em;
             cursor: pointer;
             outline: none;
+            overflow: visible;
+            -webkit-tap-highlight-color: transparent;
+            transition: ease 200ms;
 
             &:hover,
             &:focus {
                 border: {
                     style: solid;
                     width: 3px;
-                    color: rgb(27, 91, 211);
+                    color: rgb(95, 118, 160);
                 }
             }
+
+            &::before {
+                content: '';
+                position: absolute;
+                border-radius: 100%;
+                width: .5em;
+                height: .5em;
+                background-color: cornflowerblue;
+                top: 50%;
+                left: -1em;
+                margin-left: 100%;
+            }
+
+            &.loading {
+                border-radius: 100%;
+                width: .5em;
+                height: .5em;
+                padding: 0;
+                color: transparent;
+
+                &::before {
+                    animation-name: bounce;
+                    animation-duration: 2s; /* or: Xms */
+                    animation-iteration-count: infinite;
+                    animation-direction: alternate; /* or: normal */
+                    animation-timing-function:ease-in-out; /* or: ease, ease-in, ease-in-out, linear, cubic-bezier(x1, y1, x2, y2) */
+                    animation-fill-mode: forwards; /* or: backwards, both, none */
+                }
+            }
+        }
+    }
+}
+
+@keyframes bounce {
+    0% {
+        left: calc(-1em - 100%);
+        transform: scale(1) translateY(-50%);
+    }
+
+    50% {
+        transform: scaleX(1.1) scaleY(.9) translateY(-55%);
+    }
+
+    100% {
+        left: calc(1em - 100%);
+        transform: scale(1) translateY(-50%);
+    }
+}
+
+
+
+@media only screen and (max-width:641px) {
+    .search-container {
+        min-height: 1px;
+
+        button.submit {
+            display: none;
         }
     }
 }
