@@ -1,6 +1,6 @@
 'use strict';
 
-const Here = {
+const HereApi = {
 
     /**
      * url per le chiamate api
@@ -259,4 +259,4 @@ const Here = {
     }
 }
 
-export default Here;
+export default HereApi;
