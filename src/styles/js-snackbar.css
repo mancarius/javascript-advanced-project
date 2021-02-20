@@ -97,7 +97,7 @@
 
 .js-snackbar__status {
     display: none;
-    min-width: 15px;
+    min-width: 10px;
     margin-right: 5px;
     border-radius: 3px 0 0 3px;
     background-color: transparent;
@@ -163,4 +163,34 @@
 
 .js-snackbar__close:hover {
     background-color: #444;
+}
+
+
+@media (max-width:641px) {
+
+    .js-snackbar-container--top-left,
+    .js-snackbar-container--top-center,
+    .js-snackbar-container--top-right {
+        top: -5px !important;
+    }
+
+    .js-snackbar-container--bottom-left,
+    .js-snackbar-container--bottom-center,
+    .js-snackbar-container--bottom-right {
+        bottom: -5px !important;
+    }
+
+    .js-snackbar__wrapper {
+        border-radius: 0;
+    }
+
+    .js-snackbar {
+        width: 100%;
+        border-radius: 0;
+        margin: 0;
+    }
+
+    .js-snackbar__status {
+        border-radius: 0;
+    }
 }
