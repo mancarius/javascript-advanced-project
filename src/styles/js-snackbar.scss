@@ -8,6 +8,7 @@
     max-width: 100%;
     z-index: 999;
     overflow: hidden;
+    user-select: none;
 }
 
 .js-snackbar-container--top-left {
