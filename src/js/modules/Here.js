@@ -116,7 +116,7 @@ const Here = {
             throw e;
         }
         // ritorna un oggetto con l'indirizzo, altrimenti null
-        return result.items?.[0] ?? null;
+        return result.items?.[0] || {};
     },
 
     /**
@@ -127,7 +127,7 @@ const Here = {
      * @param {string} address
      * @param {number} limit
      * @param {string} type - localityType filter
-     * @returns {Object}
+     * @returns {Array}
      */
 
     async geocode(_address, _limit = 5, _type = null) {
@@ -143,7 +143,7 @@ const Here = {
         }
 
         // ritorna un oggetto con le coordinate, altrimenti null
-        return this.filterBy(result.items, type).slice(0, _limit) || {};
+        return this.filterBy(result.items, type)?.slice(0, _limit) || [];
     },
 
     /**
@@ -177,7 +177,7 @@ const Here = {
 
         let localities = result.items;
         // ritorno risultato filtrato
-        return this.filterBy(localities, _type, _query).slice(0, _limit);
+        return this.filterBy(localities, _type, _query)?.slice(0, _limit) || [];
     },
 
     /**
@@ -209,7 +209,7 @@ const Here = {
 
         let localities = result?.items ?? [];
         // ritorno risultato filtrato
-        return this.filterBy(localities, _type).slice(0, _limit);
+        return this.filterBy(localities, _type)?.slice(0, _limit) || [];
     },
 
     /**
