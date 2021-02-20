@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Parcel Sandbox</title>
-    <meta charset="UTF-8" />
-    <!-- Custom Styles -->
-    <link rel="" src="src/styles/index.css" />
-  </head>
 
-  <body>
-    <div id="app">
-      <section>
-        <header>
-          <form action="" method="get">
-            <div class="form-group">
-              <label for="InputLocation">Cerca una città</label>
-              <input
-                type="search"
-                id="InputLocation"
-                placeholder="Cerca una città"
-                autocomplete="off"
-                list="LocationList"
-              />
-              <button id="inputGeoloc">geoloc</button>
-              <ul id="LocationList"></ul>
-            </div>
-            <input type="Submit" value="Cerca" />
-          </form>
-        </header>
-        <article></article>
+<head>
+  <title>Parcel Sandbox</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Material Icons -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+  <!-- js-snackbar -->
+  <link href="src/styles/js-snackbar.css" rel="stylesheet" />
+  <!-- Custom Styles -->
+  <link href="src/styles/index.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <section class="search-container">
+        <form id="locationSearchForm">
+          <div class="search-group">
+            <label for="InputLocation">Cerca una città</label>
+            <input type="search" id="InputLocation" name="InputLocation" placeholder="Cerca una città" autocomplete="off" data-coords data-location-id
+              data-list="LocationList" />
+            <ul id="LocationList" class="suggested-list">
+            </ul>
+            <a id="inputGeolocation" class="material-icons" role="button" alt="Usa la mia posizione">gps_not_fixed</a>
+          </div>
+          <button class="submit">Cerca</button>
+        </form>
       </section>
-    </div>
+    </header>
+    <article></article>
+  </div>
 
-    <script type="model" src="src/js/index.js"></script>
-  </body>
+  <script type="text/javascript" src="src/dist/main.bundle.js"></script>
+  <script type="text/javascript" src="src/dist/runtime.bundle.js"></script>
+  <script type="text/javascript" src="src/dist/vendors.bundle.js"></script>
+</body>
+
 </html>
