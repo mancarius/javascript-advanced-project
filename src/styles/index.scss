@@ -1,3 +1,28 @@
-body {
-  font-family: Montserrat, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap");
+@import 'globals';
+
+* {
+  box-sizing: border-box;
 }
+
+html {
+  margin: 0;
+  padding: 0;;
+}
+
+body {
+  @extend html;
+  font-family: $font-family;
+  font-size: $font-size;
+}
+
+button, input {
+  font-family: $font-family;
+  font-size: $font-size;
+}
+
+label {
+  display: none;
+}
+
+@import 'search';
