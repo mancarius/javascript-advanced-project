@@ -1,9 +1,16 @@
 'use strict';
-import Here from './modules/Here'
+import HereApi from './modules/HereApi'
 import { ErrorHandler } from './modules/ErrorHandler';
 import SnackBar from './modules/SnackBar';
+import AqicnApi from './modules/AqicnApi';
 
-Here.apiKey = process.env.HERE_APY_KEY;
+HereApi.apiKey = process.env.HERE_APY_KEY;
+const aqicnApiKey = process.env.AQICN_API_KEY;
+const aqicn = new AqicnApi(aqicnApiKey);
+
+
+
+
 
 /**
  * accetta 2 coordinate e se sono in formato corretto ritorna true, altrimenti false
@@ -32,12 +39,11 @@ function searchMinimize(elm, state = true) {
 }
 
 
-$('#InputLocation').on('focusin focusout change', e => {
+$('#InputLocation').on('focusin focusout', e => {
     const this_ = e.target;
     const container = this_.closest('.search-container');
     const form = container.querySelector('form');
     const coords = this_.dataset.coords.split(',');
-    // mentre l'utente scrive
 
     switch (e.type) {
         case 'focusin':
@@ -45,11 +51,12 @@ $('#InputLocation').on('focusin focusout change', e => {
             break;
         case 'focusout':
             if (this_.value.length > 0 && checkCoords(...coords)) {
-                container.classList.add('minimize');
+                // leggero delay per permettere di eliminare il contenuto dalla X del campo
+                setTimeout(() => {
+                    container.classList.add('minimize');
+                }, 200);
             }
-            break;
-        case 'change':
-            if (this_.value.length === 0) {
+            else if (this_.value.length === 0) {
                 container.classList.remove('minimize');
             }
             break;
@@ -70,7 +77,7 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
     this_.dataset.coords = "";
 
     try {
-        let locations = await Here.autocomplete(query, 5, 'city');
+        let locations = await HereApi.autocomplete(query, 5, 'city');
         // stampa risultati
         // creo frammento
         let $list = $('<ul />', {
@@ -116,7 +123,7 @@ $(document).on('submit', '#locationSearchForm', (e) => {
             if (searchField.value.length > 1) {
                 try {
                     // invio contenuto campo supponendo sia un indirizzo
-                    const location = await Here.geocode(searchField.value.toLowerCase(), 1);
+                    const location = await HereApi.geocode(searchField.value.toLowerCase(), 1);
 
                     // prendo coordinate
                     const { lat, lng } = location?.[0]?.position ?? { lat: null, lng: null };
@@ -142,8 +149,15 @@ $(document).on('submit', '#locationSearchForm', (e) => {
                 return;
             }
         }
-
-        new SnackBar({ message: 'Coordinate inviate!' , status: 'success'});
+        // invio richiesta as api di Aqicn
+        try {
+            const aqicnFeed = await aqicn.GeolocalizedFeed(lat, lng);
+            console.log(aqicnFeed);
+        } catch (err) {
+            new ErrorHandler(err);
+            searchMinimize(this_, false);
+            return;
+        } 
     }
 
     submit(e);
@@ -166,7 +180,7 @@ $(document).on('click', '.suggested-list .item', async el => {
 
     // ora carico le coordinate della selezione
     try {
-        const location = await Here.lookupByID(locationID);
+        const location = await HereApi.lookupByID(locationID);
         // prendo le coordinate
         const { lat, lng } = location?.position;
         // verifico coordinate
@@ -205,7 +219,7 @@ document.getElementById('inputGeolocation').addEventListener('click', e => {
             let location = null;
             // ricavo Luogo da api
             try {
-                location = await Here.reverseGeocode(latitude, longitude);
+                location = await HereApi.reverseGeocode(latitude, longitude);
             } catch (e) {
                 new ErrorHandler(e);
                 searchMinimize(e.target);
