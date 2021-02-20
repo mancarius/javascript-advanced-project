@@ -5,22 +5,69 @@ import SnackBar from './modules/SnackBar';
 
 Here.apiKey = process.env.HERE_APY_KEY;
 
+/**
+ * accetta 2 coordinate e se sono in formato corretto ritorna true, altrimenti false
+ * 
+ * @function
+ * @param  {(string|number)} args - accetta 2 parametri (longitudine e latitudine)
+ * @return {boolean}
+ */
 function checkCoords(...args) {
     const [latitude, longitude] = args;
     const pattern = /-?[0-9]{1,3}[.][0-9]+/;
     return pattern.test(latitude) && pattern.test(longitude);
 }
 
+/**
+ * riduce o estende contenitore .search-container genitore dell'elemento ricevuto
+ * 
+ * @param {HTMLElement} elm - Elemento del dom figlio di .search-container
+ * @param {boolena} state - true: minimizza contenitore, false: estende contenitore
+ */
+function searchMinimize(elm, state = true) {
+    if (state) // minimizzo form di ricerca
+        elm?.closest('.search-container').classList.add('minimize');
+    else
+        elm?.closest('.search-container').classList.remove('minimize');
+}
+
+
+$('#InputLocation').on('focusin focusout change', e => {
+    const this_ = e.target;
+    const container = this_.closest('.search-container');
+    const form = container.querySelector('form');
+    const coords = this_.dataset.coords.split(',');
+    // mentre l'utente scrive
+
+    switch (e.type) {
+        case 'focusin':
+            container.classList.remove('minimize');
+            break;
+        case 'focusout':
+            if (this_.value.length > 0 && checkCoords(...coords)) {
+                container.classList.add('minimize');
+            }
+            break;
+        case 'change':
+            if (this_.value.length === 0) {
+                container.classList.remove('minimize');
+            }
+            break;
+        default:
+    }
+})
+
+
 // ascolto pressione tasti nel campo di ricerca
 document.getElementById('InputLocation').addEventListener('keyup', async e => {
-    const elm = e.target;
-    const autocompleteId = elm.dataset.list;
+    const this_ = e.target;
+    const autocompleteId = this_.dataset.list;
 
     const query = e.target.value;
 
     // rimuovo eventuali valori da location-id e coords
-    elm.dataset.locationId = "";
-    elm.dataset.coords = "";
+    this_.dataset.id = "";
+    this_.dataset.coords = "";
 
     try {
         let locations = await Here.autocomplete(query, 5, 'city');
@@ -33,13 +80,13 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
         // appendo risultati al frammento
         if (locations.length > 0) {
             for (let location of locations) {
-                $list.append(`<li class="item" data-id="${location.id}" data-city="${location.address.city}" tabindex="0">${location.address.city} <small>${location.address.countryCode}</small></li>`);
+                $list.append(`<li class="item" data-id="${location.id}" data-city="${location.address.city}" tabindex="0"><span>${location.address.city}</span> <small>${location.address.countryCode}</small></li>`);
             }
             // rendo visibile lista
-            $(elm).parents('.search-group').addClass('autocomplete');
+            $(this_).parents('.search-group').addClass('autocomplete');
         } else {
             // nascondo visibile lista
-            $(elm).parents('.search-group').removeClass('autocomplete');
+            $(this_).parents('.search-group').removeClass('autocomplete');
         }
         // sostituisco precedente lista con nuovo frmmento
         $(`#${autocompleteId}`).replaceWith($list);
@@ -52,8 +99,10 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
 $(document).on('submit', '#locationSearchForm', (e) => {
     e.preventDefault();
     async function submit(e) {
-        const form = e.target;
-        const searchField = form.querySelector('[type="search"]');
+        const this_ = e.target;
+        const searchField = this_.querySelector('[type="search"]');
+
+        searchMinimize(this_);
 
         if (typeof searchField !== 'object') {
             new ErrorHandler(new TypeError(`'${searchField}' non è un selettore valido`));
@@ -68,12 +117,13 @@ $(document).on('submit', '#locationSearchForm', (e) => {
                 try {
                     // invio contenuto campo supponendo sia un indirizzo
                     const location = await Here.geocode(searchField.value.toLowerCase(), 1);
-                    console.log(location)
+
                     // prendo coordinate
-                    const { lat, lng } = location?.[0]?.position;
+                    const { lat, lng } = location?.[0]?.position ?? { lat: null, lng: null };
                     // se le coordinate non sono valide esco
                     if (!checkCoords(lat, lng)) {
-                        new ErrorHandler('Non riesco a trovare nessuna città che corrisponda a '+ searchField.value, false);
+                        new ErrorHandler(`Non riesco a trovare nessuna città che corrisponda a '${searchField.value}'`, false);
+                        searchMinimize(this_, false);
                         return;
                     }
                     // le salvo
@@ -88,6 +138,7 @@ $(document).on('submit', '#locationSearchForm', (e) => {
             }
             else {
                 new ErrorHandler('Non riesco a trovare un indirizzo valido', false);
+                searchMinimize(this_, false);
                 return;
             }
         }
@@ -100,15 +151,18 @@ $(document).on('submit', '#locationSearchForm', (e) => {
 
 // ascolto selezione città da suggerimenti
 $(document).on('click', '.suggested-list .item', async el => {
-    const elm = el.currentTarget;
-    const locationID = elm.dataset.id;
-    const cityName = elm.dataset.city;
-    const container = elm.closest('.suggested-list');
+    const this_ = el.currentTarget;
+    const locationID = this_.dataset.id;
+    const cityName = this_.dataset.city;
+    const container = this_.closest('.suggested-list');
     const searchField = document.querySelector(`[data-list="${container.id}"]`);
+
+    // minimizzo form di ricerca
+    searchMinimize(this_);
 
     searchField.value = cityName;
     searchField.dataset.locationId = locationID;
-    $(elm).parents('.search-group').removeClass('autocomplete');
+    $(this_).parents('.search-group').removeClass('autocomplete');
 
     // ora carico le coordinate della selezione
     try {
@@ -118,13 +172,15 @@ $(document).on('click', '.suggested-list .item', async el => {
         // verifico coordinate
         if (!checkCoords(lat, lng)) {
             new ErrorHandler('Non ho ricevuto coordinate valide');
+            searchMinimize(this_, false);
             return;
         }
         // le salvo
         searchField.dataset.coords = `${lat},${lng}`;
         //simulo submit
-        $('#locationSearchForm [type="submit"]').trigger('click');
+        $('#locationSearchForm .submit').trigger('click');
     } catch (e) {
+        searchMinimize(this_, false);
         new ErrorHandler(e);
     }
 });
@@ -133,7 +189,8 @@ $(document).on('click', '.suggested-list .item', async el => {
 document.getElementById('inputGeolocation').addEventListener('click', e => {
     // verifico se la geolocalizzazione è presente, altrimenti disattivo il bottone
     if ("geolocation" in navigator) {
-        /* la geolocalizzazione è disponibile */
+    /* la geolocalizzazione è disponibile */
+        searchMinimize(e.target);
         // ricavo coordinate da inviare
         navigator.geolocation.getCurrentPosition(async function (position) {
             const {
@@ -141,7 +198,8 @@ document.getElementById('inputGeolocation').addEventListener('click', e => {
                 longitude
             } = position.coords;
             if (!checkCoords(latitude, longitude)) {
-                console.warn(latitude, longitude, 'non sono coordinate valide');
+                new ErrorHandler(`'${latitude},${longitude}' non sono coordinate valide`, false);
+                searchMinimize(e.target, false);
                 return;
             }
             let location = null;
@@ -150,6 +208,7 @@ document.getElementById('inputGeolocation').addEventListener('click', e => {
                 location = await Here.reverseGeocode(latitude, longitude);
             } catch (e) {
                 new ErrorHandler(e);
+                searchMinimize(e.target);
                 return;
             }
 
@@ -159,7 +218,7 @@ document.getElementById('inputGeolocation').addEventListener('click', e => {
             searchField.value = location.address.city;
             searchField.dataset.coords = `${latitude},${longitude}`;
             //simulo submit
-            $('#locationSearchForm [type="submit"]').trigger('click');
+            $('#locationSearchForm .submit').trigger('click');
         });
     } else {
         /* la geolocalizzazione NON È disponibile */
