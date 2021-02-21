@@ -1,0 +1,32 @@
+[
+    {
+        "aqi-min": 0,
+        "label": "Good",
+        "details": "Air quality is considered satisfactory, and air pollution poses little or no risk"
+    },
+    {
+        "aqi-min": 51,
+        "label": "Moderate",
+        "details": "Air quality is acceptable; however, for some pollutants there may be a moderate health concern for a very small number of people who are unusually sensitive to air pollution."
+    },
+    {
+        "aqi-min": 101,
+        "label": "Unhealthy for Sensitive Groups",
+        "details": "Members of sensitive groups may experience health effects. The general public is not likely to be affected."
+    },
+    {
+        "aqi-min": 151,
+        "label": "Unhealthy",
+        "details": "Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects"
+    },
+    {
+        "aqi-min": 201,
+        "label": "Very Unhealthy",
+        "details": "Health warnings of emergency conditions. The entire population is more likely to be affected."
+    },
+    {
+        "aqi-min": 301,
+        "label": "Hazardous",
+        "details": "Health alert: everyone may experience more serious health effects"
+    }
+]

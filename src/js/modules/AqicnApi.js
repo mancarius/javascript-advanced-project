@@ -1,8 +1,10 @@
 'use strict';
-
+import aqiLegend from '../../aqi-scale-and-color-legend.json';
 /**
+ * 
  * @class
  * @param {string} apiKey - chiave di accesso personale
+ * @author Mattia Mancarella
  */
 function AqicnApi(apiKey) {
     this._apiKey = apiKey;
@@ -18,7 +20,7 @@ function AqicnApi(apiKey) {
      * @param {string} _path - parametri da inserire nel path dell'url
      * @returns {Promise}
      */
-    this._ApiCall = async function (path) {
+    this._apiCall = async function (path) {
         // se la chiave non è valorizzata creo l'errore
         if (this._apiKey === null) throw {
             name: "InvalidApiKey",
@@ -71,13 +73,13 @@ function AqicnApi(apiKey) {
      * @param  {(string|number)} lng - longitudine
      * @returns {Array}
      */
-    this.GeolocalizedFeed = async function(lat, lng) {
+    this.geolocalizedFeed = async function(lat, lng) {
 
         const path = `geo:${lat};${lng}`;
         let result = [];
         
         try {
-            result = await this._ApiCall(path);
+            result = await this._apiCall(path);
         } catch (e) {
             throw e;
         }
@@ -86,6 +88,7 @@ function AqicnApi(apiKey) {
             // misuro distanza tra coordinate per ricavare precisione
             const [station_lat, station_lng] = result.data.city.geo;
             result.data.precision = this._calcCrow(lat, lng, station_lat, station_lng);
+            result.data.legend = this._getLegend(result.data.aqi);
             return result.data;
         }
         else 
@@ -130,6 +133,23 @@ function AqicnApi(apiKey) {
         return Value * Math.PI / 180;
     }
 
+
+    /**
+     * data un aqi, ritorna la relativa legenda
+     * 
+     * @function
+     * @param {number} aqi - Air Quality Index
+     */
+    this._getLegend = function (aqi) {
+        let legend = {};
+
+        for (let item of aqiLegend) {
+            if (item['aqi-min'] < aqi)
+                legend = item;
+            else
+                return legend;
+        }
+    }
 }
 
 export default AqicnApi;
