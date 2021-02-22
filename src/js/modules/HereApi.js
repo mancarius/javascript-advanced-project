@@ -57,7 +57,7 @@ const HereApi = {
             message: "'null' isn't a valid key"
         };
 
-        if (this.controller) this.controller.abort();
+        //if (this.controller) this.controller.abort();
 
         this.controller = new AbortController();
 
@@ -88,8 +88,8 @@ const HereApi = {
                 }
             }
         } catch (e) {
-            // questo errore viene chiamato ogni volta che il controller anulla la chiamata
-            if (e instanceof DOMException) { return []; }
+            // questo errore viene chiamato ogni volta che il controller annulla la chiamata
+            if (e instanceof DOMException) { console.warn(e); return []; }
             throw e;
         }
     },
@@ -141,7 +141,6 @@ const HereApi = {
         } catch (e) {
             throw e;
         }
-
         // ritorna un oggetto con le coordinate, altrimenti null
         return this.filterBy(result.items, type)?.slice(0, _limit) || [];
     },

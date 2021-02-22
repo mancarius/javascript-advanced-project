@@ -32,32 +32,62 @@ function checkCoords(...args) {
  * @param {boolena} state - true: minimizza contenitore, false: estende contenitore
  */
 function searchMinimize(elm, state = true) {
-    if (state) // minimizzo form di ricerca
+    const aqiFeed = document.querySelector('.aqi-feed__container');
+    if (state) { // minimizzo form di ricerca
         elm?.closest('.search-container').classList.add('minimize');
-    else
+        aqiFeed.classList.add('active');
+    }
+    else {
         elm?.closest('.search-container').classList.remove('minimize');
+        aqiFeed.classList.remove('active');
+    }
+}
+
+
+/**
+ * Aggiorno DOM con risultati del feed
+ * 
+ * @param {string} address
+ * @param {Object} feed 
+ */
+function feedPrint(address, feed) {
+    const container = document.querySelector('.aqi-feed__container');
+    address = address.split(',');
+    let city = address.shift();
+    let label = feed.legend.label.split(' ');
+    // scrivi indirizzo
+    container.querySelector('.aqi-feed__address').innerHTML = `${city}<small>${address.join(', ')}</small>`;
+    container.querySelector('.aqi-feed__accuracy .last-update span').textContent = feed.time.s.split(' ')[0];
+    container.querySelector('.aqi-feed__accuracy .precision span').textContent = feed.precision < 50 ? 'high' : feed.precision < 150 ? 'medium' : 'low';
+    container.querySelector('.aqi-feed__aqi').dataset.aqiLevel = feed.legend.aqi_min;
+    container.querySelector('.aqi-feed__aqi .aqi').textContent = feed.aqi;
+    container.querySelector('.aqi-feed__label .air-pollution').innerHTML = `${label.shift()} ${label.length ? `<small> ${label.join(' ')} </small>` : ``}`;
+    container.querySelector('.aqi-feed__details').textContent = feed.legend.details;
+    container.querySelector('.aqi-feed__footer .station-city').textContent = `"${feed.city.name}"`;
+    container.querySelector('.aqi-feed__footer .station-distance').textContent = Math.round(feed.precision);
+    container.querySelector('.aqi-feed__footer .required-city').textContent = city;
+    // la pirma volta rendo visibile il contenitore
+    container.style.display = 'grid';
 }
 
 
 $('#InputLocation').on('focusin focusout', e => {
     const this_ = e.target;
-    const container = this_.closest('.search-container');
-    const form = container.querySelector('form');
     const coords = this_.dataset.coords.split(',');
 
     switch (e.type) {
         case 'focusin':
-            container.classList.remove('minimize');
+            searchMinimize(this_, false);
             break;
         case 'focusout':
             if (this_.value.length > 0 && checkCoords(...coords)) {
                 // leggero delay per permettere di eliminare il contenuto dalla X del campo
                 setTimeout(() => {
-                    container.classList.add('minimize');
+                    searchMinimize(this_);
                 }, 200);
             }
             else if (this_.value.length === 0) {
-                container.classList.remove('minimize');
+                searchMinimize(this_, false);
             }
             break;
         default:
@@ -103,11 +133,15 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
 });
 
 // ascolto invio form
+
 $(document).on('submit', '#locationSearchForm', (e) => {
     e.preventDefault();
+
     async function submit(e) {
         const this_ = e.target;
         const searchField = this_.querySelector('[type="search"]');
+        // rimuovo focus dal campo di ricerca
+        searchField.blur();
 
         searchMinimize(this_);
 
@@ -122,9 +156,8 @@ $(document).on('submit', '#locationSearchForm', (e) => {
         if (!checkCoords(lat, lng)) {
             if (searchField.value.length > 1) {
                 try {
-                    // invio contenuto campo supponendo sia un indirizzo
+                    // invio contenuto campo supponendo sia il nome di una città (o parte di esso)
                     const location = await HereApi.geocode(searchField.value.toLowerCase(), 1);
-
                     // prendo coordinate
                     const { lat, lng } = location?.[0]?.position ?? { lat: null, lng: null };
                     // se le coordinate non sono valide esco
@@ -133,8 +166,10 @@ $(document).on('submit', '#locationSearchForm', (e) => {
                         searchMinimize(this_, false);
                         return;
                     }
-                    // le salvo
+                    // salvo coordinte
                     searchField.dataset.coords = `${lat},${lng}`;
+                    // salvo indirizzo
+                    searchField.dataset.address = location[0].address.city + ',' + (location[0].address?.county + ',' ?? '') + (location[0].address?.state + ',' ?? '') + location[0].address.countryCode;
                     // sovrascrivo valore campo di ricerca nel caso in cui il nome della location ritornata non coincida con quella scritta
                     searchField.value = location[0].address?.city;
                     // richiamo submit (chiamata ricorsiva)
@@ -149,15 +184,19 @@ $(document).on('submit', '#locationSearchForm', (e) => {
                 return;
             }
         }
-        // invio richiesta as api di Aqicn
-        try {
-            const aqicnFeed = await aqicn.GeolocalizedFeed(lat, lng);
-            console.log(aqicnFeed);
-        } catch (err) {
-            new ErrorHandler(err);
-            searchMinimize(this_, false);
-            return;
-        } 
+        // invio richiesta ad api di Aqicn
+        else {
+            try {
+                const aqicnFeed = await aqicn.geolocalizedFeed(lat, lng);
+                // stampo risultati nel DOM
+                feedPrint(searchField.dataset.address, aqicnFeed);
+                searchMinimize(this_);
+            } catch (err) {
+                new ErrorHandler(err);
+                searchMinimize(this_, false);
+                return;
+            }
+        }
     }
 
     submit(e);
@@ -182,15 +221,17 @@ $(document).on('click', '.suggested-list .item', async el => {
     try {
         const location = await HereApi.lookupByID(locationID);
         // prendo le coordinate
-        const { lat, lng } = location?.position;
+        const { lat, lng } = location?.position ?? { lat: null, lng: null };
         // verifico coordinate
         if (!checkCoords(lat, lng)) {
             new ErrorHandler('Non ho ricevuto coordinate valide');
             searchMinimize(this_, false);
             return;
         }
-        // le salvo
+        // salvo coordinate
         searchField.dataset.coords = `${lat},${lng}`;
+        // salvo indirizzo
+        searchField.dataset.address = location.address.city + ',' + (location.address?.county + ',' ?? '')  + (location.address?.state + ',' ?? '') + location.address.countryCode;
         //simulo submit
         $('#locationSearchForm .submit').trigger('click');
     } catch (e) {
@@ -228,6 +269,8 @@ document.getElementById('inputGeolocation').addEventListener('click', e => {
 
             // salvo le coordinate in data-coords dell'elemento #InputLocation
             let searchField = document.getElementById('InputLocation');
+            // salvo indirizzo
+            searchField.dataset.address = location.address.city + ',' + location.address.county + ',' + location.address.state + ',' + location.address.countryCode;
             searchField.dataset.id = location.id;
             searchField.value = location.address.city;
             searchField.dataset.coords = `${latitude},${longitude}`;

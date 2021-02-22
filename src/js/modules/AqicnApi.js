@@ -12,6 +12,7 @@ function AqicnApi(apiKey) {
     this._controller = null;
     this._baseUrl = 'https://api.waqi.info/feed/';
 
+    
     /**
      * Invia richiesta GET verso api
      * 
@@ -65,6 +66,7 @@ function AqicnApi(apiKey) {
         }
     };
 
+
     /**
      * date latitudine e longitudine, ritorna le rilevazioni della stazione più vicina
      * 
@@ -92,8 +94,9 @@ function AqicnApi(apiKey) {
             return result.data;
         }
         else 
-            throw {name:'AqicnApiError', message: result.data};
+            throw {name:'AqicnApiError', message: result?.data ?? result};
     }
+
 
     /**
      * This function takes in latitude and longitude of two location and returns the distance between them as the crow flies( in km)
@@ -144,7 +147,7 @@ function AqicnApi(apiKey) {
         let legend = {};
 
         for (let item of aqiLegend) {
-            if (item['aqi-min'] < aqi)
+            if (item['aqi_min'] < aqi)
                 legend = item;
             else
                 return legend;
