@@ -2,6 +2,7 @@
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  line-height: normal;
 }
 
 html, body {
@@ -12,9 +13,12 @@ html, body {
 body {
   font-family: Montserrat, serif;
   font-size: 16pt;
+  color: #636363;
+  background-color: whitesmoke;
 }
 
-button, input {
+button,
+input {
   font-family: Montserrat, serif;
   font-size: 16pt;
 }
@@ -23,13 +27,23 @@ label {
   display: none;
 }
 
+.card {
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 1rem;
+  margin: 0;
+  -webkit-box-shadow: 0 0px 4px -2px #aaaaaa;
+          box-shadow: 0 0px 4px -2px #aaaaaa;
+  position: relative;
+}
+
 .search-container {
-  min-height: 100vh;
+  min-height: 90vh;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-transition: min-height 200ms ease-out;
-  transition: min-height 200ms ease-out;
+  -webkit-transition: min-height 400ms ease-out;
+  transition: min-height 400ms ease-out;
 }
 
 .search-container.minimize {
@@ -183,6 +197,7 @@ label {
   right: 0;
   bottom: 0;
   padding: 0 1em;
+  line-height: inherit;
 }
 
 .search-container form button.submit {
@@ -289,5 +304,27 @@ label {
   .search-container button.submit {
     display: none;
   }
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 10vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+footer ul li {
+  margin: 1em;
 }
 /*# sourceMappingURL=index.css.map */

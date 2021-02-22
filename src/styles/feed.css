@@ -1,0 +1,226 @@
+.aqi-feed__container {
+  max-height: 0px;
+  overflow: hidden;
+  max-width: 641px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  -webkit-transition: all 200ms ease;
+  transition: all 200ms ease;
+  -webkit-transition-delay: 400ms;
+          transition-delay: 400ms;
+  -webkit-transition-property: 'opacity max-height';
+  transition-property: 'opacity max-height';
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em .5em;
+      grid-template-areas: "address address address" "accuracy accuracy accuracy" "aqi aqi-label aqi-label" "aqi-desc aqi-desc aqi-desc" "aqi-footer aqi-footer aqi-footer";
+  opacity: 0;
+  margin-bottom: 0;
+}
+
+.aqi-feed__container.active {
+  max-height: 9999px;
+  opacity: 1;
+  margin-bottom: 5rem;
+  -webkit-transition-delay: 0;
+          transition-delay: 0;
+  -webkit-transition-duration: 200ms;
+          transition-duration: 200ms;
+}
+
+.aqi-feed__container > * {
+  margin: 0;
+}
+
+.aqi-feed__container > * .label {
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  opacity: .5;
+  text-align: left;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+}
+
+.aqi-feed__address {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 3;
+  grid-area: address;
+  font-family: inherit;
+  padding: 2rem;
+  background-color: #3b547c;
+  background-image: url(https://images.unsplash.com/photo-1613798526395-623ecf2985bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxfDB8MXxyYW5kb218fHx8fHx8fA&ixlib=rb-1.2.1&q=80&w=1080&utm_source=unsplash_source&utm_medium=referral&utm_campaign=api-credit);
+  background-size: cover;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.aqi-feed__address small {
+  text-transform: uppercase;
+  display: block;
+  font-family: inherit;
+  margin-top: 1em;
+  font-weight: bold;
+}
+
+.aqi-feed__accuracy {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 3;
+  grid-area: accuracy;
+  text-align: right;
+  font-size: .7em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.aqi-feed__accuracy .precision span {
+  font-weight: bold;
+}
+
+.aqi-feed__accuracy .last-update {
+  text-align: left;
+}
+
+.aqi-feed__accuracy .last-update span {
+  font-weight: bold;
+}
+
+.aqi-feed__aqi {
+  -ms-grid-row: 3;
+  -ms-grid-column: 1;
+  grid-area: aqi;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column;
+          flex-flow: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  min-height: 6em;
+}
+
+.aqi-feed__aqi .label {
+  text-align: center;
+}
+
+.aqi-feed__aqi .aqi {
+  font-size: 3em;
+  text-align: center;
+  line-height: normal;
+  display: block;
+  font-weight: bold;
+}
+
+.aqi-feed__label {
+  -ms-grid-row: 3;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 2;
+  grid-area: aqi-label;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column;
+          flex-flow: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.aqi-feed__label .label {
+  text-align: left;
+}
+
+.aqi-feed__label .air-pollution {
+  display: block;
+  font-size: 2em;
+  line-height: normal;
+  font-weight: bold;
+}
+
+.aqi-feed__label .air-pollution small {
+  display: block;
+  opacity: .6;
+  font-weight: normal;
+  font-size: .5em;
+}
+
+.aqi-feed__details {
+  -ms-grid-row: 4;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 3;
+  grid-area: aqi-desc;
+  background-color: #383f4c;
+  color: #e6e6e6;
+}
+
+.aqi-feed__footer {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 3;
+  grid-area: aqi-footer;
+  font-size: .7em;
+}
+
+[data-aqi-level="0"] {
+  color: #ffffff;
+  background-color: #009966;
+}
+
+[data-aqi-level="51"] {
+  color: inherit;
+  background-color: #ffde33;
+}
+
+[data-aqi-level="101"] {
+  color: #ffffff;
+  background-color: #ff9933;
+}
+
+[data-aqi-level="151"] {
+  color: #ffffff;
+  background-color: #cc0033;
+}
+
+[data-aqi-level="201"] {
+  color: #ffffff;
+  background-color: #660099;
+}
+
+[data-aqi-level="301"] {
+  color: #ffffff;
+  background-color: #7e0023;
+}
+
+@media only screen and (max-width: 641px) {
+  .aqi-feed__container.active {
+    -webkit-transition: unset;
+    transition: unset;
+  }
+  .aqi-feed__container .label {
+    font-size: 2.5vw;
+  }
+  .aqi-feed__aqi .api {
+    font-size: 12vw;
+  }
+  .aqi-feed__label .air-pollution {
+    font-size: 8vw;
+  }
+}
+/*# sourceMappingURL=feed.css.map */

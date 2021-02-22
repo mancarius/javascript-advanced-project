@@ -1,7 +1,7 @@
 .search-container {
-    min-height: 100vh;
+    min-height: 90vh;
     display: flex;
-    transition: min-height 200ms ease-out;
+    transition: min-height #{$transition-duration}ms ease-out;
 
     &.minimize {
         min-height: 1px;
@@ -145,6 +145,7 @@
                         right: 0;
                         bottom: 0;
                         padding: 0 1em;
+                        line-height: inherit;
                     }
                 }
             }

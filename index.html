@@ -14,6 +14,8 @@
   <link href="src/styles/js-snackbar.css" rel="stylesheet" />
   <!-- Custom Styles -->
   <link href="src/styles/index.css" rel="stylesheet" />
+  <link rel="preload" href="src/styles/feed.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet';this.as=null" />
 </head>
 
 <body>
@@ -23,8 +25,8 @@
         <form id="locationSearchForm">
           <div class="search-group">
             <label for="InputLocation">Cerca una città</label>
-            <input type="search" id="InputLocation" name="InputLocation" placeholder="Cerca una città" autocomplete="off" data-coords data-location-id
-              data-list="LocationList" />
+            <input type="search" id="InputLocation" name="InputLocation" placeholder="Cerca una città"
+              autocomplete="off" data-coords data-location-id data-list="LocationList" />
             <ul id="LocationList" class="suggested-list">
             </ul>
             <a id="inputGeolocation" class="material-icons" role="button" alt="Usa la mia posizione">gps_not_fixed</a>
@@ -33,8 +35,26 @@
         </form>
       </section>
     </header>
-    <article></article>
+    <article class="aqi-feed__container" style="display: none;">
+      <h2 class="aqi-feed__address"></h2>
+      <div class="aqi-feed__accuracy">
+        <div class="last-update">Updated at <span>12-12-2020</span></div>
+        <div class="precision">Reliability: <span>good</span></div>
+      </div>
+      <div class="aqi-feed__aqi card"><small class="label">Air Quality Index</small><span class="aqi"></span></div>
+      <div class="aqi-feed__label card"><small class="label">Air Pollution Level</small><span class="air-pollution"></span></div>
+      <div class="aqi-feed__details card"></div>
+      <div class="aqi-feed__footer card">Data from the station located in <span class="station-city">Naples</span>, <span
+          class="station-distance">134</span>km away from <span class="required-city">Copertino</span> </div>
+    </article>
   </div>
+
+  <footer>
+    <ul>
+      <li>Air quality data powered by <a href="https://aqicn.org">AQICN</a></li>
+      <li>Cities reserch powered by <a href="https://www.here.com/">Here</a></li>
+    </ul>
+  </footer>
 
   <script type="text/javascript" src="src/dist/main.bundle.js"></script>
   <script type="text/javascript" src="src/dist/runtime.bundle.js"></script>

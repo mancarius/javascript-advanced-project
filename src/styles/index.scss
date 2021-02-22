@@ -3,20 +3,24 @@
 
 * {
   box-sizing: border-box;
+  line-height: normal;
 }
 
 html {
   margin: 0;
-  padding: 0;;
+  padding: 0;
 }
 
 body {
   @extend html;
   font-family: $font-family;
   font-size: $font-size;
+  color: $text-color;
+  background-color: whitesmoke;
 }
 
-button, input {
+button,
+input {
   font-family: $font-family;
   font-size: $font-size;
 }
@@ -25,4 +29,14 @@ label {
   display: none;
 }
 
+.card {
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 1rem;
+  margin: 0;
+  box-shadow: 0 0px 4px -2px #aaaaaa;
+  position: relative;
+}
+
 @import 'search';
+@import 'footer';
