@@ -71,7 +71,7 @@ const HereApi = {
             apiUrl = encodeURI(apiUrl);
             // se ho già il risultato di questa query in cache lo ritorno
             if (this.cache.has(apiUrl))
-                response = this.cache.get(apiUrl);
+                return this.cache.get(apiUrl);
             else {
                 // altrimenti invio chiamata GET all'api
                 response = await fetch(apiUrl, {
@@ -80,7 +80,12 @@ const HereApi = {
                 // salvo risposta nella cache
                 this.cache.set(apiUrl, response);
             }
-            if (response.ok) return await response.clone().json();
+            if (response.ok) {
+                let json = await response.clone().json();
+                // salvo risposta nella cache
+                this.cache.set(apiUrl, json);
+                return json;
+            }
             else {
                 throw {
                     name: "HereError",

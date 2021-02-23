@@ -34,23 +34,27 @@ function AqicnApi(apiKey) {
 
         const apiKey = `token=${this._apiKey}`;
         let apiUrl = [this._baseUrl, path, '/', '?', apiKey].join('');
-        let response = [];
+        let response = {};
 
         try {
             // codifico url
             apiUrl = encodeURI(apiUrl);
             // se ho già il risultato di questa query in cache lo ritorno
             if (this._cache.has(apiUrl))
-                response = this._cache.get(apiUrl);
+                return this._cache.get(apiUrl);
             else {
                 // altrimenti invio chiamata GET all'api
                 response = await fetch(apiUrl, {
                     signal: this._controller.signal
                 });
-                // salvo risposta nella cache
-                this._cache.set(apiUrl, response);
             }
-            if (response.ok) return await response.clone().json();
+
+            if (response.ok) {
+                let json = await response.json();
+                // salvo risposta nella cache
+                this._cache.set(apiUrl, json);
+                return json;
+            }
             else {
                 throw {
                     name: "AqicnError",
@@ -60,7 +64,7 @@ function AqicnApi(apiKey) {
         } catch (e) {
             // questo errore viene chiamato ogni volta che il controller annulla la chiamata
             if (e instanceof DOMException) {
-                return [];
+                return {};
             }
             throw e;
         }
@@ -94,7 +98,7 @@ function AqicnApi(apiKey) {
             return result.data;
         }
         else 
-            throw {name:'AqicnApiError', message: result?.data ?? result};
+            throw {name:'AqicnApiError', message: result?.data ?? result?.message ?? result};
     }
 
 
