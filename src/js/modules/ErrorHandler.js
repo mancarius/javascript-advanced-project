@@ -12,7 +12,7 @@ export class ErrorHandler {
     constructor(...args) {
         // valori di default
         this.is_error = true;
-        this.message = 'Errore non definito';
+        this.message = 'Ops, something gone wrong';
         this.error = null;
         // assegno argomenti a variabili (se esistono)
         args.map(arg => {
