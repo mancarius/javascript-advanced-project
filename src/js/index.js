@@ -74,8 +74,9 @@ function feedPrint(address, feed) {
     container.querySelector('.aqi-feed__footer .station-city').textContent = `"${feed.city.name}"`;
     container.querySelector('.aqi-feed__footer .station-distance').textContent = Math.round(feed.precision);
     container.querySelector('.aqi-feed__footer .required-city').textContent = city;
-    // la prima volta rendo visibile il contenitore
-    container.style.display = 'grid';
+    // rendo visibile il contenitore (serve per la prima ricerca da mobile)
+    container.classList.add('compiled');
+    searchMinimize(document.getElementById('InputLocation'));
 }
 
 
@@ -240,7 +241,6 @@ $(document).on('submit', '#locationSearchForm', (e) => {
                 const aqicnFeed = await aqicn.geolocalizedFeed(lat, lng);
                 // stampo risultati nel DOM
                 feedPrint(SEARCH_RESULTS[0].address, aqicnFeed);
-                searchMinimize(this_);
             } catch (err) {
                 new ErrorHandler(err);
             }

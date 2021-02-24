@@ -183,11 +183,14 @@
 
 @media only screen and (max-width:641px) {
     .aqi-feed__container {
-        opacity: 1;
-        max-height: 9999px;
+
+        &.compiled {
+            opacity: 1;
+            max-height: 9999px;
+        }
 
         &.active {
-            transition: unset;
+            //transition: unset;
         }
 
         .label {

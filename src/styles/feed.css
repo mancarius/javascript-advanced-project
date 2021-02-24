@@ -209,13 +209,9 @@
 }
 
 @media only screen and (max-width: 641px) {
-  .aqi-feed__container {
+  .aqi-feed__container.compiled {
     opacity: 1;
     max-height: 9999px;
-  }
-  .aqi-feed__container.active {
-    -webkit-transition: unset;
-    transition: unset;
   }
   .aqi-feed__container .label {
     font-size: 2.5vw;
