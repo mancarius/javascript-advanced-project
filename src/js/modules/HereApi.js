@@ -62,7 +62,9 @@ const HereApi = {
         this.controller = new AbortController();
 
         const apiKey = `apiKey=${this._apiKey}`;
-        _params.push(apiKey);
+        const lang = `lang=${navigator.language}`;
+        _params.push(lang, apiKey);
+        
         let apiUrl = [_url, '?', _params.join('&')].join('');
         let response = null;
 
