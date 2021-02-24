@@ -17,6 +17,9 @@ body {
   font-size: $font-size;
   color: $text-color;
   background-color: whitesmoke;
+  display: flex;
+  flex-flow: column;
+  min-height: 100vh;
 }
 
 button,

@@ -15,6 +15,14 @@ body {
   font-size: 16pt;
   color: #636363;
   background-color: whitesmoke;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column;
+          flex-flow: column;
+  min-height: 100vh;
 }
 
 button,
@@ -306,6 +314,11 @@ label {
   }
 }
 
+footer {
+  background-color: rgba(22, 54, 65, 0.048);
+  margin-top: auto;
+}
+
 footer ul {
   list-style: none;
   padding: 0;
@@ -316,9 +329,9 @@ footer ul {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;

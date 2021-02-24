@@ -1,4 +1,6 @@
 footer {
+    background-color: rgba(22, 54, 65, 0.048);
+    margin-top: auto;
     ul {
         list-style: none;
         padding: 0;
@@ -6,7 +8,7 @@ footer {
         min-height: 10vh;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: center;
         align-items: center;
 
         li {
