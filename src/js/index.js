@@ -18,6 +18,7 @@ let SEARCH_RESULTS = [];
 // focus sul campo di riceca al caricamento della pagina
 document.getElementById('InputLocation').focus();
 
+
 /**
  * accetta 2 coordinate e se sono in formato corretto ritorna true, altrimenti false
  * 
@@ -35,8 +36,9 @@ function checkCoords(latitude, longitude) {
 /**
  * riduce o estende genitore .search-container dell'elemento ricevuto
  * 
- * @param {HTMLElement} elm - Elemento del dom figlio di .search-container
- * @param {boolena} state - true: minimizza contenitore, false: estende contenitore
+ * @function
+ * @param {HTMLElement} elm - Elemento figlio di .search-container
+ * @param {boolean} state - true: minimizza contenitore, false: estende contenitore
  */
 
 function searchMinimize(elm, state = true) {
@@ -53,10 +55,10 @@ function searchMinimize(elm, state = true) {
 
 
 /**
- * Aggiorno DOM con risultati del feed
+ * Aggiorno DOM con i dati ricevuti
  * 
- * @param {Object} address
- * @param {Object} feed 
+ * @param {Object} address - Indirizzo ricevuto da here.com
+ * @param {Object} feed - Dati aqi ricevuti da aqicn.com
  */
 
 function feedPrint(address, feed) {
@@ -80,65 +82,16 @@ function feedPrint(address, feed) {
 }
 
 
+/**
+ * Popola lista suggerimenti ricerca (.tips-list) sulla base della stringa ricevuta
+ * 
+ * @param {Event} e 
+ */
 
-/////////////////////////////////////////////////
-//
-//
-//  EVENTI
-//
-//
-/////////////////////////////////////////////////
-
-
-
-//
-//  FOCUSIN / FOCUSOUT 
-//
-//  @ #InputLocation
-//  
-//  Gestisce animazione campo di ricerca (no mobile)
-//
-
-$('#InputLocation').on('focusin focusout', e => {
-    const this_ = e.target;
-    const value = this_.value;
-    const {lat, lng} = SEARCH_RESULTS?.position ?? {lat: null, lng: null} ;
-
-    switch (e.type) {
-        case 'focusin':
-            this_.select();
-            searchMinimize(this_, false);
-            break;
-        case 'focusout':
-            if (value.length > 0 && checkCoords(lat, lng)) {
-                // leggero delay per permettere di eliminare il contenuto dalla X del campo
-                setTimeout(() => {
-                    searchMinimize(this_);
-                }, 200);
-            }
-            else if (value.length === 0) {
-                searchMinimize(this_, false);
-            }
-            break;
-        default:
-    }
-})
-
-
-
-//
-//  KEYUP
-//
-//  @ #InputLocation
-//  
-//  Ascolta rilascio tasti durante scrittura nel campo di ricerca per attivare completamento automatico
-//
-
-document.getElementById('InputLocation').addEventListener('keyup', async e => {
+async function autocomplete(e) {
     const this_ = e.target;
     const autocompleteId = this_.dataset.list;
-
-    const query = e.target.value;
+    const query = this_.value;
 
     // rimuovo eventuali valori da location-id e coords
     SEARCH_RESULTS = [];
@@ -151,12 +104,12 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
         // creo frammento
         let $list = $('<ul />', {
             id: autocompleteId,
-            class: 'suggested-list'
+            class: 'tips-list'
         });
         // appendo risultati al frammento
         if (locations.length > 0) {
             for (let location of locations) {
-                $list.append(`<li class="item" id="${location.id}" tabindex="0"><span>${location.address.city}</span> <small>${location.address.countryCode}</small></li>`);
+                $list.append(`<li class="tip" id="${location.id}" tabindex="0"><span>${location.address.city}</span> <small>${location.address.countryCode}</small></li>`);
             }
             // rendo visibile lista
             $(this_).parents('.search-group').addClass('autocomplete');
@@ -169,104 +122,85 @@ document.getElementById('InputLocation').addEventListener('keyup', async e => {
     } catch (e) {
         new ErrorHandler(e);
     }
-});
+}
 
 
+/**
+ * Richiede aqi del primo indirizzo contenuto in SEARCH_RESULTS, altrimenti cerca indirizzo corrispondente a chiave di ricerca e poi richiede aqi.Al termine richiama feedPrint per stampare i risultati
+ * 
+ * @param {HTMLElement} this_ 
+ */
 
-//
-//  SUBMIT
-//
-//  @ #locationSearchForm
-//
-//  Scarica i dati da aqicn usando le coordinate. 
-//  Se le coordinate non sono ancora state ricavate, 
-//  le cerca inviando il testo nel campo di ricerca a here.com
-//  che risponderà con la località corrispondente.
-//
+async function getAqi(this_) {
+    const searchField = this_.querySelector('[type="search"]');
+    const searchKey = searchField.value.toLowerCase();
+    // rimuovo focus dal campo di ricerca
+    searchField.blur();
 
-$(document).on('submit', '#locationSearchForm', (e) => {
-    e.preventDefault();
+    const { lat, lng } = SEARCH_RESULTS?.[0]?.position ?? { lat: null, lng: null };
 
-    async function submit(e) {
-        const this_ = e.target;
-        const searchField = this_.querySelector('[type="search"]');
-        const searchKey = searchField.value.toLowerCase();
-        // rimuovo focus dal campo di ricerca
-        searchField.blur();
-
-        const { lat, lng } = SEARCH_RESULTS?.[0]?.position ?? { lat: null, lng: null };
-
-        // se non ci sono le coordinate faccio un tentativo col contenuto del campo di ricerca (se valorizzato)
-        if (!checkCoords(lat, lng)) {
-            let location = [];
-            if (SEARCH_RESULTS.length) {
-                try {
-                    location = await HereApi.lookupByID(SEARCH_RESULTS[0].id);
-                } catch (err) {
-                    new ErrorHandler(err);
-                }
-            }
-            else if (searchKey.length > 1) {
-                try {
-                    // invio contenuto campo supponendo sia il nome di una città (o parte di esso)
-                    location = await HereApi.geocode(searchKey, 1);
-                } catch (err) {
-                    new ErrorHandler(err);
-                }
-            }
-            else {
-                new ErrorHandler('Please, give me a valid city name to search for', false);
-                searchMinimize(this_, false);
-                searchField.focus();
-                return;
-            }
-            // prendo coordinate
-            const { lat, lng } = location?.[0]?.position ?? location?.position ?? {lat:null, lng:null};
-            // se le coordinate non sono valide esco
-            if (!checkCoords(lat, lng)) {
-                new ErrorHandler(`I'm sorry, but i can't find any city named '${searchKey}'. Try with another name.`, false);
-                searchMinimize(this_, false);
-                return;
-            }
-            // salvo dati indirizzo
-            SEARCH_RESULTS = location.length ? location : [location];
-            // sovrascrivo valore campo di ricerca nel caso in cui il nome della location ritornata non coincida con quella scritta
-            searchField.value = SEARCH_RESULTS?.[0].address.city;
-            // richiamo submit (chiamata ricorsiva)
-            submit(e);
-        }
-        // invio richiesta ad api di Aqicn
-        else {
+    // se non ci sono le coordinate faccio un tentativo col contenuto del campo di ricerca (se valorizzato)
+    if (!checkCoords(lat, lng)) {
+        let location = [];
+        if (SEARCH_RESULTS.length) {
             try {
-                const aqicnFeed = await aqicn.geolocalizedFeed(lat, lng);
-                // stampo risultati nel DOM
-                feedPrint(SEARCH_RESULTS[0].address, aqicnFeed);
+                location = await HereApi.lookupByID(SEARCH_RESULTS[0].id);
             } catch (err) {
                 new ErrorHandler(err);
             }
+        } else if (searchKey.length > 1) {
+            try {
+                // invio contenuto campo supponendo sia il nome di una città (o parte di esso)
+                location = await HereApi.geocode(searchKey, 1);
+            } catch (err) {
+                new ErrorHandler(err);
+            }
+        } else {
+            new ErrorHandler('Please, give me a valid city name to search for', false);
+            searchMinimize(this_, false);
+            searchField.focus();
+            return;
+        }
+        // prendo coordinate
+        const { lat, lng } = location?.[0]?.position ?? location?.position ?? { lat: null, lng: null };
+        // se le coordinate non sono valide esco
+        if (!checkCoords(lat, lng)) {
+            new ErrorHandler(`I'm sorry, but i can't find any city named '${searchKey}'. Try with another name.`, false);
+            searchMinimize(this_, false);
+            return;
+        }
+        // salvo dati indirizzo
+        SEARCH_RESULTS = location.length ? location : [location];
+        // sovrascrivo valore campo di ricerca nel caso in cui il nome della location ritornata non coincida con quella scritta
+        searchField.value = SEARCH_RESULTS?.[0].address.city;
+        // richiamo submit (chiamata ricorsiva)
+        submit(e);
+    }
+    // invio richiesta ad api di Aqicn
+    else {
+        try {
+            const aqicnFeed = await aqicn.geolocalizedFeed(lat, lng);
+            // stampo risultati nel DOM
+            feedPrint(SEARCH_RESULTS[0].address, aqicnFeed);
+        } catch (err) {
+            new ErrorHandler(err);
         }
     }
-
-    submit(e);
-})
+}
 
 
+/**
+ * Riceve suggerimento selezionato dall'utente, ricava coordinate e richiama submit
+ * 
+ * @param {Event} e
+ */
 
-//
-//  CLICK
-//
-//  @ .suggested-list .item
-//  
-//  Cattura selezione della città tra quelle suggerite durante la ricerca
-//  e richiama evento SUBMIT di #locationSearchForm per caricare i dati aqicn della stazione più vicina
-//
-
-$(document).on('click', '.suggested-list .item', async el => {
-    const this_ = el.currentTarget;
+async function tip2coords (e) {
+    const this_ = e.currentTarget;
     const locationID = this_.id;
     let location = SEARCH_RESULTS.filter(o => o.id === locationID);
     const cityName = location?.[0].address?.city;
-    const container = this_.closest('.suggested-list');
+    const container = this_.closest('.tips-list');
     const searchField = document.querySelector(`[data-list="${container.id}"]`);
 
     if (cityName == 'undefined') {
@@ -301,7 +235,149 @@ $(document).on('click', '.suggested-list .item', async el => {
         searchMinimize(this_, false);
         new ErrorHandler(e);
     }
-});
+}
+
+
+/**
+ * Se disponibili, ricava coordinate del browser e richiede indirizzo corrispondente a here.com, lo salva in SEARCH_RESULTS e richiama submit.
+ * 
+ * @param {HTMLElement} this_ 
+ */
+
+async function coords2address(e) {
+    // verifico se la geolocalizzazione è presente
+    if ("geolocation" in navigator) {
+    /* la geolocalizzazione è disponibile */
+        const this_ = e.target;
+        searchMinimize(this_);
+        // ricavo coordinate da inviare
+        navigator.geolocation.getCurrentPosition(async function (position) {
+
+            const { latitude, longitude } = position.coords;
+
+            if (!checkCoords(latitude, longitude)) {
+                new ErrorHandler(`I received invalid coordinates. Please try again`, false);
+                searchMinimize(this_, false);
+                return;
+            }
+
+            let location = null;
+
+            // ricavo città da api
+            try {
+                location = await HereApi.reverseGeocode(latitude, longitude);
+            } catch (e) {
+                new ErrorHandler(e);
+                searchMinimize(this_);
+                return;
+            }
+
+            // salvo indirizzo
+            SEARCH_RESULTS = [location];
+            // imposto città ricevuta come valore del campo di ricerca         
+            document.getElementById('InputLocation').value = location.address.city;
+            //simulo submit
+            $('#locationSearchForm .submit').trigger('click');
+        },
+        e => {
+            new SnackBar({
+                message: 'Geolocation not available'
+            });
+        });
+    } else {
+        /* la geolocalizzazione NON È disponibile */
+        new SnackBar({
+            message: 'Geolocation not available'
+        });
+    }
+}
+
+
+
+/////////////////////////////////////////////////
+//
+//
+//  EVENTI
+//
+//
+/////////////////////////////////////////////////
+
+
+
+//
+//  FOCUSIN / FOCUSOUT 
+//
+//  @ #InputLocation
+//  
+//  Gestisce animazione campo di ricerca (no mobile)
+//
+
+$('#InputLocation').on('focusin focusout', e => {
+    const this_ = e.target;
+    const value = this_.value;
+    const { lat, lng } = SEARCH_RESULTS?.position ?? { lat: null, lng: null };
+
+    switch (e.type) {
+        case 'focusin':
+            this_.select();
+            searchMinimize(this_, false);
+            break;
+        case 'focusout':
+            if (value.length > 0 && checkCoords(lat, lng)) {
+                // leggero delay per permettere di eliminare il contenuto dalla X del campo
+                setTimeout(() => {
+                    searchMinimize(this_);
+                }, 200);
+            } else if (value.length === 0) {
+                searchMinimize(this_, false);
+            }
+            break;
+        default:
+    }
+})
+
+
+
+//
+//  KEYUP
+//
+//  @ #InputLocation
+//  
+//  Ascolta rilascio tasti durante scrittura nel campo di ricerca per attivare completamento automatico
+//
+
+document.getElementById('InputLocation').addEventListener('keyup', autocomplete);
+
+
+
+//
+//  SUBMIT
+//
+//  @ #locationSearchForm
+//
+//  Scarica i dati da aqicn usando le coordinate. 
+//  Se le coordinate non sono ancora state ricavate, 
+//  le cerca inviando il testo nel campo di ricerca a here.com
+//  che risponderà con la località corrispondente.
+//
+
+document.getElementById('locationSearchForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    getAqi(e.target);
+})
+
+
+
+//
+//  CLICK
+//
+//  @ .tips-list .tip
+//  
+//  Cattura selezione della città tra quelle suggerite durante la ricerca
+//  e richiama evento SUBMIT di #locationSearchForm per caricare i dati aqicn della stazione più vicina
+//
+
+$(document).on('click', '.tips-list .tip', tip2coords);
 
 
 
@@ -314,42 +390,4 @@ $(document).on('click', '.suggested-list .item', async el => {
 //  richiama evento SUBMIT di #locationSearchForm per caricare i dati aqicn della stazione più vicina
 //
 
-document.getElementById('inputGeolocation').addEventListener('click', e => {
-    // verifico se la geolocalizzazione è presente
-    if ("geolocation" in navigator) {
-    /* la geolocalizzazione è disponibile */
-        searchMinimize(e.target);
-        // ricavo coordinate da inviare
-        navigator.geolocation.getCurrentPosition(async function (position) {
-
-            const { latitude, longitude } = position.coords;
-
-            if (!checkCoords(latitude, longitude)) {
-                new ErrorHandler(`I received invalid coordinates. Please try again`, false);
-                searchMinimize(e.target, false);
-                return;
-            }
-
-            let location = null;
-
-            // ricavo città da api
-            try {
-                location = await HereApi.reverseGeocode(latitude, longitude);
-            } catch (e) {
-                new ErrorHandler(e);
-                searchMinimize(e.target);
-                return;
-            }
-
-            // salvo indirizzo
-            SEARCH_RESULTS = [location];
-            // imposto città ricevuta come valore del campo di ricerca         
-            document.getElementById('InputLocation').value = location.address.city;
-            //simulo submit
-            $('#locationSearchForm .submit').trigger('click');
-        });
-    } else {
-        /* la geolocalizzazione NON È disponibile */
-        new SnackBar({ message: 'Geolocation not available' });
-    }
-});
+document.getElementById('inputGeolocation').addEventListener('click', coords2address);

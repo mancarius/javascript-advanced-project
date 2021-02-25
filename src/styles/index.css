@@ -101,7 +101,7 @@ label {
   border-bottom-right-radius: 0;
 }
 
-.search-container form .search-group.autocomplete input[type="search"]:focus + .suggested-list {
+.search-container form .search-group.autocomplete input[type="search"]:focus + .tips-list {
   -webkit-transition-delay: 0ms;
           transition-delay: 0ms;
   visibility: visible;
@@ -109,16 +109,14 @@ label {
 }
 
 .search-container form .search-group input[type="search"] {
-  border-color: #aaa;
-  border-style: solid;
-  border-width: 1px;
+  border: none;
   border-radius: 1em;
   -webkit-transition-property: border-radius;
   transition-property: border-radius;
   -webkit-transition-delay: 200ms;
           transition-delay: 200ms;
   width: 100%;
-  background-color: #fff;
+  background-color: #ffffff94;
   padding: 0;
   margin: 0;
   padding-left: 1em;
@@ -127,6 +125,12 @@ label {
   font-weight: 600;
   color: inherit;
   height: 2em;
+}
+
+.search-container form .search-group input[type="search"]:hover, .search-container form .search-group input[type="search"]:focus {
+  background-color: #ffffff;
+  -webkit-box-shadow: 0px 1px 3px -1px #0000004d;
+          box-shadow: 0px 1px 3px -1px #0000004d;
 }
 
 .search-container form .search-group a[role="button"] {
@@ -159,11 +163,11 @@ label {
   opacity: 1;
 }
 
-.search-container form .search-group .suggested-list {
+.search-container form .search-group .tips-list {
   font-size: inherit;
   display: block;
   position: absolute;
-  background-color: #fff;
+  background-color: #ffffff;
   z-index: 10;
   top: calc(100%);
   padding: 0;
@@ -181,13 +185,9 @@ label {
           box-shadow: 0px 1px 3px -1px #0000004d;
   list-style: none;
   overflow: hidden;
-  border-color: #aaa;
-  border-style: solid;
-  border-width: 1px;
-  border-top: none;
 }
 
-.search-container form .search-group .suggested-list li {
+.search-container form .search-group .tips-list .tip {
   position: relative;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,11 +199,11 @@ label {
   outline: none;
 }
 
-.search-container form .search-group .suggested-list li:hover, .search-container form .search-group .suggested-list li:focus {
+.search-container form .search-group .tips-list .tip:hover, .search-container form .search-group .tips-list .tip:focus {
   background-color: #f0f0f0;
 }
 
-.search-container form .search-group .suggested-list li small {
+.search-container form .search-group .tips-list .tip small {
   position: absolute;
   text-align: right;
   display: block;
