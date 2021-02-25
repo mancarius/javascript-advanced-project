@@ -20,13 +20,15 @@
     opacity: 0;
     margin-bottom: 0;
 
-    &.active {
+    &.active.compiled {
         max-height: 9999px;
         opacity: 1;
         margin-bottom: 5rem;
         transition-delay: 0;
         transition-duration: #{$transition-duration / 2}ms;
     }
+
+    
 
     &>* {
         margin: 0;
@@ -187,10 +189,6 @@
         &.compiled {
             opacity: 1;
             max-height: 9999px;
-        }
-
-        &.active {
-            //transition: unset;
         }
 
         .label {

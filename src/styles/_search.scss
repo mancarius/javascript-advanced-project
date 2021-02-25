@@ -1,5 +1,6 @@
 .search-container {
-    min-height: 90vh;
+    width: 100%;
+    flex: 2;
     display: flex;
     transition: min-height #{$transition-duration}ms ease-out;
 

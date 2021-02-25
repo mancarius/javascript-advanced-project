@@ -174,7 +174,7 @@ async function getAqi(this_) {
         // sovrascrivo valore campo di ricerca nel caso in cui il nome della location ritornata non coincida con quella scritta
         searchField.value = SEARCH_RESULTS?.[0].address.city;
         // richiamo submit (chiamata ricorsiva)
-        submit(e);
+        getAqi(e);
     }
     // invio richiesta ad api di Aqicn
     else {
@@ -315,7 +315,7 @@ async function coords2address(e) {
 $('#InputLocation').on('focusin focusout', e => {
     const this_ = e.target;
     const value = this_.value;
-    const { lat, lng } = SEARCH_RESULTS?.position ?? { lat: null, lng: null };
+    const { lat, lng } = SEARCH_RESULTS?.[0]?.position ?? { lat: null, lng: null };
 
     switch (e.type) {
         case 'focusin':

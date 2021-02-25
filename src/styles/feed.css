@@ -20,7 +20,7 @@
   margin-bottom: 0;
 }
 
-.aqi-feed__container.active {
+.aqi-feed__container.active.compiled {
   max-height: 9999px;
   opacity: 1;
   margin-bottom: 5rem;
