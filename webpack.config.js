@@ -1,29 +1,50 @@
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const {
     CleanWebpackPlugin
 } = require('clean-webpack-plugin');
 const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
+const { resolve } = require('path');
 
 const config = {
     mode: 'production',
     entry: './src/js/index.js',
     output: {
-        path: path.resolve(__dirname, 'src', 'dist'),
-        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'js/[name].bundle.js',
+        publicPath: ''
     },
     //devtool: 'eval-source-map',
     plugins: [
-        new CleanWebpackPlugin({
-            cleanStaleWebpackAssets: false
-        }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
             _: 'lodash',
             $: 'jquery',
             jquery: 'jquery'
         }),
+        new HtmlWebpackPlugin({
+            template: 'src/index.html'
+        }),
+        new CopyPlugin({
+            patterns: [{
+                context: "./src/styles/",
+                from:"**/*.css",
+                to: path.resolve(__dirname, "dist", "styles"),
+                force: true
+            },
+            {
+                context: "./assets/",
+                from: "**/*",
+                to: path.resolve(__dirname, "dist", "assets"),
+                force: true
+            }]
+        }),
+        new CleanWebpackPlugin({
+            cleanStaleWebpackAssets: false
+        })
     ],
     optimization: {
         runtimeChunk: 'single',
