@@ -7,13 +7,13 @@ const dotenv = require('dotenv');
 const fs = require('fs'); // to check if the file exists
 
 const config = {
-    mode: 'development',
+    mode: 'production',
     entry: './src/js/index.js',
     output: {
         path: path.resolve(__dirname, 'src', 'dist'),
         filename: '[name].bundle.js',
     },
-    devtool: 'eval-source-map',
+    //devtool: 'eval-source-map',
     plugins: [
         new CleanWebpackPlugin({
             cleanStaleWebpackAssets: false
