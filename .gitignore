@@ -39,7 +39,7 @@
 *.webp
 
 # Portable Network Graphics
-*.png
+src/**/*.png
 
 # Animated Portable Network Graphics
 *.apng
@@ -134,7 +134,7 @@ build/
 dist/
 
 ### assets folder ###
-assets/
+#assets/
 
 ### dotenv ###
 .env
