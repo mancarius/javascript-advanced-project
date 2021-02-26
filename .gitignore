@@ -153,3 +153,6 @@ sitemap.*
 
 ### css.map ###
 *.map
+
+### package-lock.json ###
+package-lock.json
