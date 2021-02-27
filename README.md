@@ -1,10 +1,25 @@
-# javascript-advanced-project
+# Javascript Advanced Project
+
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mancarius/javascript-advanced-project?style=plastic)
+
+<br/>
+
+![project screen shot](https://github.com/mancarius/javascript-advanced-project/blob/main/images/screenshot.png)
+
+<br/>
 
 Simple javascript project that allows to obtain information on the pollution levels of a city by searching by city name or GPS position of the device.
+([View demo](https://www.mattiamancarella.com/works/javascript/javascript-advanced-project/))
 
-![page screenshot](https://github.com/mancarius/javascript-advanced-project/blob/main/images/screenshot.png)
+<br/>
 
-[Demo](https://www.mattiamancarella.com/works/javascript/javascript-advanced-project/)
+### Built With
+
+* [jQuery](https://jquery.com)
+* [Lodash](https://lodash.com)
+* [js-snakbar](https://www.cssscript.com/snackbar-toast-notification/)
+
+<br/>
 
 ## Installation
 
@@ -13,6 +28,8 @@ Just fork and install packages with <code>npm</code> running the following comma
 ```bash
 npm install
 ```
+
+<br/>
 
 ## Usage
 
@@ -23,12 +40,20 @@ HERE_APY_KEY=your-api-key
 AQICN_API_KEY=your-api-key
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+<br/>
 
 ## Credits
 
-Air quality data is provided by [aqicn.com](https://www.aqicn.com), while the city search leverages the [here.com](https://www.here.com) API
+* Air quality data is provided by [aqicn.com](https://www.aqicn.com). </br>
+* Address search is provided by [here.com](https://www.here.com)
+
+<br/>
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+<br/>
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
