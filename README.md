@@ -34,7 +34,7 @@ npm install
 ## Usage
 
 In order to access the api services, you need to get your own api keys respectivelly from [aqicn](https://aqicn.org/data-platform/token/#/) and [here](https://developer.here.com/).
-Then save your keys in your <code>.env</code> file in the root directory
+Then save your keys in your <code>.env</code> file in the root directory like this
 ```.env
 HERE_APY_KEY=your-api-key
 AQICN_API_KEY=your-api-key
